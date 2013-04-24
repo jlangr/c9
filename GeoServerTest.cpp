@@ -3,7 +3,12 @@
 
 #include "GeoServer.h"
 #include "VectorUtil.h"
-
+// START:timer
+// START_HIGHLIGHT
+#include "TestTimer.h"
+// END_HIGHLIGHT
+// ...
+// END:timer
 using namespace std;
 
 TEST_GROUP(AGeoServer) {
@@ -125,6 +130,7 @@ TEST(AGeoServer_UsersInBox, HandlesLargeNumbersOfUsers) {
       server.updateLocation(s.str(), anotherLocation);
    }
 
+   TestTimer timer;
    auto users = server.usersInBox(aUser, Width, Height);
 
    CHECK_EQUAL(lots, users.size());
