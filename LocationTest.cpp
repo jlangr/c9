@@ -1,5 +1,7 @@
 #include "CppUTest/TestHarness.h"
 
+#include <sstream>
+
 #include "Location.h"
 
 using namespace std;
@@ -38,7 +40,7 @@ TEST(ALocation, AnswersDistanceFromAnotherInMeters) {
    Location point1{ 38.017, -104.84 };
    Location point2{ 38.025, -104.99 };
 
-   // verify at www.ig.utexas.edu/outreach/googleearth/latlong.html
+   // verified at www.ig.utexas.edu/outreach/googleearth/latlong.html
    DOUBLES_EQUAL(13170, point1.distanceInMeters(point2), 5);
 }
 
@@ -97,9 +99,18 @@ TEST(ALocation, IsVeryCloseToAnotherWhenSmallDistanceApart) {
    CHECK_TRUE(ArbitraryLocation.isVeryCloseTo(threeMetersAway));
 }
 
-TEST(ALocation, IsVeryCloseToAnotherWhenNotSmallDistanceApart) {
+TEST(ALocation, IsNotVeryCloseToAnotherWhenNotSmallDistanceApart) {
    Location fourMetersAway { ArbitraryLocation.go(4, South) };
 
    CHECK_FALSE(ArbitraryLocation.isVeryCloseTo(fourMetersAway));
+}
+
+TEST(ALocation, ProvidesPrintableRepresentation) {
+   Location location{-32, -105};
+   stringstream s;
+
+   s << location;
+
+   CHECK_EQUAL("(-32,-105)", s.str());
 }
 

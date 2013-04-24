@@ -17,20 +17,8 @@ const double CloseMeters{ 3 };
 
 class Location {
 public:
-   Location() 
-      : latitude_(std::numeric_limits<double>::infinity())
-      , longitude_(std::numeric_limits<double>::infinity()) {}
-
-   Location(double latitude, double longitude) 
-      : latitude_(latitude), longitude_(longitude) {}
-
-   double latitude() const {
-      return latitude_;
-   }
-
-   double longitude() const {
-      return longitude_;
-   }
+   Location();
+   Location(double latitude, double longitude);
 
    inline double toRadians(double degrees) const {
       return degrees * ToRadiansConversionFactor;
@@ -48,63 +36,23 @@ public:
       return toRadians(longitude_);
    }
 
-   bool operator==(const Location& that) {
-      return 
-         longitude_ == that.longitude_ &&
-         latitude_ == that.latitude_;
-   }
+   double latitude() const;
+   double longitude() const;
 
-   bool operator!=(const Location& that) {
-      return !(*this == that);
-   }
-
-   // from williams.best.vwh.net/avform.htm#LL
-   Location go(double meters, double bearing) const {
-      bearing = toRadians(bearing);
-      double distance { meters / RadiusOfEarthInMeters };
-      double newLat { 
-         asin(sin(latitudeAsRadians()) * cos(distance) + 
-              cos(latitudeAsRadians()) * sin(distance) * cos(bearing)) };
-
-      double newLong = longitudeAsRadians();
-      if (cos(latitudeAsRadians()) != 0) 
-         newLong = 
-            fmod(longitudeAsRadians() - asin(sin(bearing) * sin(distance) / cos(newLat)) + Pi,
-                 2 * Pi) - Pi;
-
-      return Location(toCoordinate(newLat), toCoordinate(newLong));
-   }
-
-   double distanceInMeters(const Location& there) const {
-      return RadiusOfEarthInMeters * haversineDistance(there);
-   }
-
-   bool isUnknown() const {
-      return latitude_ == std::numeric_limits<double>::infinity();
-   }
-
-   bool isVeryCloseTo(const Location& there) const {
-      return distanceInMeters(there) <= CloseMeters;
-   }
+   bool operator==(const Location& that);
+   bool operator!=(const Location& that);
+   Location go(double meters, double bearing) const;
+   double distanceInMeters(const Location& there) const;
+   bool isUnknown() const;
+   bool isVeryCloseTo(const Location& there) const;
 
 private:
    double latitude_;
    double longitude_;
 
-   double haversineDistance(Location there) const {
-      double deltaLongitude { longitudeAsRadians() - there.longitudeAsRadians() };
-      double deltaLatitude { latitudeAsRadians() - there.latitudeAsRadians() };
-
-      double aHaversine { 
-         pow(
-            sin(deltaLatitude / 2.0), 2.0) + 
-               cos(latitudeAsRadians()) * cos(there.latitudeAsRadians()) * pow(sin(deltaLongitude / 2), 
-            2) };
-      return 2 * atan2(sqrt(aHaversine), sqrt(1.0 - aHaversine));
-   }
+   double haversineDistance(Location there) const;
 };
 
-// TODO write test!
 std::ostream& operator<<(std::ostream& output, const Location& location);
 
 #endif
