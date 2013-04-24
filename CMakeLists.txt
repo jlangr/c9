@@ -8,9 +8,11 @@ add_definitions(-g -std=c++0x)
 
 set(CMAKE_CXX_FLAGS "${CMAXE_CXX_FLAGS} -Wall")
 set(sources 
+   Area.cpp
    GeoServer.cpp
    Location.cpp)
 set(testSources 
+   AreaTest.cpp
    CppUTestExtensions.cpp
    CppUTestExtensionsTest.cpp
    GeoServerTest.cpp
