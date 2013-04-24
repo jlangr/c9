@@ -69,7 +69,6 @@ TEST(AGeoServer, AnswersUnknownLocationForUserNoLongerTracked) {
    CHECK_TRUE(server.locationOf(aUser).isUnknown());
 }
 
-// START:usersInBox
 TEST_GROUP(AGeoServer_UsersInBox) {
    GeoServer server;
 
@@ -114,4 +113,20 @@ TEST(AGeoServer_UsersInBox, AnswersOnlyUsersWithinSpecifiedRange) {
 
    CHECK_EQUAL(vector<string> { cUser }, UserNames(users));
 }
-// END:usersInBox
+
+// START:scaleTest
+TEST(AGeoServer_UsersInBox, HandlesLargeNumbersOfUsers) {
+   Location anotherLocation{aUserLocation.go(10, West)};
+   const unsigned int lots {500000};
+   for (unsigned int i{0}; i < lots; i++) {
+      stringstream s;
+      s << "user" << i;
+      server.track(s.str());
+      server.updateLocation(s.str(), anotherLocation);
+   }
+
+   auto users = server.usersInBox(aUser, Width, Height);
+
+   CHECK_EQUAL(lots, users.size());
+}
+// END:scaleTest

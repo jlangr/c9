@@ -30,7 +30,6 @@ std::unordered_map<std::string, Location>::const_iterator
    return locations_.find(user);
 }
 
-// START:usersInBox
 bool GeoServer::isDifferentUserInBounds(
       const pair<string, Location>& each,
       const string& user,
@@ -50,4 +49,4 @@ vector<User> GeoServer::usersInBox(
          users.push_back(User{each.first, each.second});
    return users;
 }
-// END:usersInBox
+
