@@ -130,7 +130,9 @@ TEST(AGeoServer_UsersInBox, HandlesLargeNumbersOfUsers) {
       server.updateLocation(s.str(), anotherLocation);
    }
 
+// START_HIGHLIGHT
    TestTimer timer;
+// END_HIGHLIGHT
    auto users = server.usersInBox(aUser, Width, Height);
 
    CHECK_EQUAL(lots, users.size());
