@@ -17,7 +17,8 @@ set(testSources
    CppUTestExtensionsTest.cpp
    GeoServerTest.cpp
    LocationTest.cpp
-   TestTimer.cpp)
+   TestTimer.cpp
+   WorkTest.cpp)
 add_executable(utest testmain.cpp ${testSources} ${sources})
 
 target_link_libraries(utest CppUTest)
