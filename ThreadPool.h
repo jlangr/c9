@@ -9,22 +9,21 @@
 class ThreadPool {
 public:
    bool hasWork() {
-      return !workQueue.empty();
+      return !workQueue_.empty();
    }
 
    void add(Work work) {
-      has = true;
-      workQueue.push_front(work); 
+      workQueue_.push_front(work); 
    }
 
    Work pullWork() {
-      Work work = workQueue.back();
-      workQueue.pop_back();
+      auto work = workQueue_.back();
+      workQueue_.pop_back();
       return work;
    }
 
 private:
-   std::deque<Work> workQueue;
+   std::deque<Work> workQueue_;
 };
 
 #endif
