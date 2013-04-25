@@ -12,14 +12,18 @@
 
 class ThreadPool {
 public:
+// START_HIGHLIGHT
    virtual ~ThreadPool() {
       if (workThread_)
          workThread_->join();
    }
+// END_HIGHLIGHT
 
+// START_HIGHLIGHT
    void start() {
       workThread_ = std::make_shared<std::thread>(&ThreadPool::worker, this);
    }
+// END_HIGHLIGHT
    // ...
 // END:thread
    bool hasWork() {
@@ -38,14 +42,18 @@ public:
 
 // START:thread
 private:
+// START_HIGHLIGHT
    void worker() {
       while (!hasWork())
          ;
       pullWork().execute();
    }
+// END_HIGHLIGHT
 
    std::deque<Work> workQueue_;
+// START_HIGHLIGHT
    std::shared_ptr<std::thread> workThread_;
+// END_HIGHLIGHT
 };
 // END:thread
 
