@@ -2,22 +2,27 @@
 
 #include "ThreadPool.h"
 #include <functional>
+#include <mutex>
+#include <thread>
+#include <condition_variable>
 
 using namespace std;
 
-TEST_GROUP(AThreadPool) {};
+TEST_GROUP(AThreadPool) {
+   mutex m;
+};
 
 TEST(AThreadPool, ProcessesASingleRequest) {
    ThreadPool pool;
 
-   bool wasExecuted{false};
+   condition_variable assertFunctionWasExecuted;
    auto executeFunction = [&] () { 
-      wasExecuted = true; 
-      // block
+      assertFunctionWasExecuted.notify_one();
    };
    Work work(executeFunction);
    
    pool.add(work);
 
-   // block until
+   unique_lock<mutex> lock(m);
+   assertFunctionWasExecuted.wait(lock);
 }
