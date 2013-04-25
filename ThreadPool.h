@@ -26,7 +26,7 @@ public:
    }
 
    void add(Work work) {
-      workQueue.push_back(work); 
+      workQueue.push_front(work); 
    }
 
 private:
