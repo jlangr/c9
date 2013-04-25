@@ -3,28 +3,40 @@
 
 #include <string>
 #include <deque>
+#include <thread>
 
 #include "Work.h"
 
 class ThreadPool {
 public:
+   ThreadPool() 
+      : workThread_{&ThreadPool::worker, this} {
+   }
+
+   virtual ~ThreadPool() {
+      workThread_.join();
+   }
+
    bool hasWork() {
-      return !workQueue.empty();
+      return !workQueue_.empty();
    }
 
    void add(Work work) {
-      has = true;
-      workQueue.push_front(work); 
+      workQueue_.push_front(work); 
    }
 
    Work pullWork() {
-      Work work = workQueue.back();
-      workQueue.pop_back();
+      Work work = workQueue_.back();
+      workQueue_.pop_back();
       return work;
    }
 
 private:
-   std::deque<Work> workQueue;
+   void worker() {
+   }
+
+   std::deque<Work> workQueue_;
+   std::thread workThread_;
 };
 
 #endif

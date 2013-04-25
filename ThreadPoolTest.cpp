@@ -2,9 +2,15 @@
 
 #include "ThreadPool.h"
 
+#include <condition_variable>
+#include <mutex>
+#include <chrono>
+
 using namespace std;
+using std::chrono::milliseconds;
 
 TEST_GROUP(AThreadPool) {
+   mutex m;
    ThreadPool pool;
 };
 
@@ -51,3 +57,13 @@ TEST(AThreadPool, HasWorkAfterWorkRemovedButWorkRemains) {
    CHECK_TRUE(pool.hasWork());
 }
 
+TEST(AThreadPool, PullsWorkInAThread) {
+   condition_variable wasExecuted;
+   Work work{[&] { wasExecuted.notify_all(); } };
+
+   pool.add(work);
+
+   unique_lock<mutex> lock(m);
+   LONGS_EQUAL(cv_status::no_timeout, 
+         wasExecuted.wait_for(lock, milliseconds(100)));
+}
