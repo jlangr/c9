@@ -1,22 +1,27 @@
 #ifndef ThreadPool_h
 #define ThreadPool_h
 
+// START:thread
 #include <string>
 #include <deque>
+// START_HIGHLIGHT
 #include <thread>
+// END_HIGHLIGHT
 
 #include "Work.h"
 
 class ThreadPool {
 public:
-   ThreadPool() 
-      : workThread_{&ThreadPool::worker, this} {
-   }
-
    virtual ~ThreadPool() {
-      workThread_.join();
+      if (workThread_)
+         workThread_->join();
    }
 
+   void start() {
+      workThread_ = std::make_shared<std::thread>(&ThreadPool::worker, this);
+   }
+   // ...
+// END:thread
    bool hasWork() {
       return !workQueue_.empty();
    }
@@ -26,17 +31,22 @@ public:
    }
 
    Work pullWork() {
-      Work work = workQueue_.back();
+      auto work = workQueue_.back();
       workQueue_.pop_back();
       return work;
    }
 
+// START:thread
 private:
    void worker() {
+      while (!hasWork())
+         ;
+      pullWork().execute();
    }
 
    std::deque<Work> workQueue_;
-   std::thread workThread_;
+   std::shared_ptr<std::thread> workThread_;
 };
+// END:thread
 
 #endif

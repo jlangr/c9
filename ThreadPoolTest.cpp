@@ -57,7 +57,9 @@ TEST(AThreadPool, HasWorkAfterWorkRemovedButWorkRemains) {
    CHECK_TRUE(pool.hasWork());
 }
 
+// START:thread
 TEST(AThreadPool, PullsWorkInAThread) {
+   pool.start();
    condition_variable wasExecuted;
    Work work{[&] { wasExecuted.notify_all(); } };
 
@@ -67,3 +69,4 @@ TEST(AThreadPool, PullsWorkInAThread) {
    LONGS_EQUAL(cv_status::no_timeout, 
          wasExecuted.wait_for(lock, milliseconds(100)));
 }
+// END:thread
