@@ -6,6 +6,7 @@
 #include <deque>
 // START_HIGHLIGHT
 #include <thread>
+#include <memory>
 // END_HIGHLIGHT
 
 #include "Work.h"
