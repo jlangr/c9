@@ -2,41 +2,28 @@
 #define ThreadPool_h
 
 #include <string>
-#include <thread>
 #include <deque>
 
 #include "Work.h"
 
 class ThreadPool {
 public:
-// START:race
-   ThreadPool() 
-      : thread{std::make_shared<std::thread>(&ThreadPool::worker, this)} {}
-// ...
-// END:race
-   ~ThreadPool() {
-      thread->join();
-   }
-
-// START:race
-   void worker() {
-// START_HIGHLIGHT
-      while (workQueue.empty())
-// END_HIGHLIGHT
-         ;
-
-      Work work = workQueue.back();
-      workQueue.pop_back();
-      work.execute();
+   bool hasWork() {
+      return !workQueue.empty();
    }
 
    void add(Work work) {
+      has = true;
       workQueue.push_front(work); 
    }
-// END:race
+
+   Work pullWork() {
+      Work work = workQueue.back();
+      workQueue.pop_back();
+      return work;
+   }
 
 private:
-   std::shared_ptr<std::thread> thread;
    std::deque<Work> workQueue;
 };
 

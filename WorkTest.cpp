@@ -11,6 +11,50 @@ using namespace std;
 TEST_GROUP(AWorkObject) {
 };
 
+TEST(AWorkObject, DefaultsFunctionToNullObject) {
+   Work work;
+   try {
+      work.execute();
+   }
+   catch(...) {
+      FAIL("unable to execute function");
+   }
+}
+
+TEST(AWorkObject, DefaultsFunctionToNullObjectWhenConstructedWithId) {
+   Work work(1);
+   try {
+      work.execute();
+   }
+   catch(...) {
+      FAIL("unable to execute function");
+   }
+}
+
+TEST(AWorkObject, CanBeConstructedWithAnId) {
+   Work work(1);
+
+   CHECK_EQUAL(1, work.id());
+}
+
+TEST(AWorkObject, DefaultsIdTo0) {
+   Work work;
+
+   CHECK_EQUAL(0, work.id());
+}
+
+TEST(AWorkObject, DefaultsIdTo0WhenFunctionSpecified) {
+   Work work{[]{}};
+
+   CHECK_EQUAL(0, work.id());
+}
+
+TEST(AWorkObject, CanBeConstructedWithAFunctionAndId) {
+   Work work{[]{}, 1};
+
+   CHECK_EQUAL(1, work.id());
+}
+
 TEST(AWorkObject, ExecutesFunctionStored) {
    bool wasExecuted{false};
    auto executeFunction = [&] () { wasExecuted = true; };
