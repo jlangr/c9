@@ -119,10 +119,9 @@ TEST(AGeoServer_UsersInBox, HandlesLargeNumbersOfUsers) {
    Location anotherLocation{aUserLocation.go(10, West)};
    const unsigned int lots {500000};
    for (unsigned int i{0}; i < lots; i++) {
-      stringstream s;
-      s << "user" << i;
-      server.track(s.str());
-      server.updateLocation(s.str(), anotherLocation);
+      string user{"user" + to_string(i)};
+      server.track(user);
+      server.updateLocation(user, anotherLocation);
    }
 
    auto users = server.usersInBox(aUser, Width, Height);
