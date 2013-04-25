@@ -14,7 +14,6 @@ TEST_GROUP(AThreadPool) {
 
 TEST(AThreadPool, ProcessesASingleRequest) {
    ThreadPool pool;
-
    condition_variable assertFunctionWasExecuted;
    auto executeFunction = [&] () { 
       assertFunctionWasExecuted.notify_one();
