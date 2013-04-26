@@ -1,16 +1,20 @@
 #!/bin/bash
 
-for ((i = 1; i <= 5000; i++))
+export COUNT=5000
+if [[ -n "$1" ]]; then
+   export COUNT=$1
+fi
+
+for ((i = 1; i <= $COUNT; i++))
 do
-#   build/utest >/dev/null
-   echo -n $i-
-   build/utest # >out.txt
+#   echo -n $i-
+   build/utest >/dev/null 2>out.txt
    if [ "$?" -ne "0" ]; then
-#      cat out.txt
-      echo failed at $i
+      echo $i failed:
+      cat out.txt
       break
 #   else
 #      rm out.txt
    fi
 done
-
+echo 
