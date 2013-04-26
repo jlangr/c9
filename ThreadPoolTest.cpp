@@ -61,12 +61,18 @@ TEST(AThreadPool, HasWorkAfterWorkRemovedButWorkRemains) {
 TEST(AThreadPool, PullsWorkInAThread) {
    pool.start();
    condition_variable wasExecuted;
-   Work work{[&] { wasExecuted.notify_all(); } };
+   bool wasWorked{0};
+   Work work{[&] { 
+      std::unique_lock<std::mutex> lock(m); 
+      wasWorked = true;
+      wasExecuted.notify_all(); } 
+   };
 
    pool.add(work);
 
    unique_lock<mutex> lock(m);
    LONGS_EQUAL(cv_status::no_timeout, 
-         wasExecuted.wait_for(lock, milliseconds(100)));
+      wasExecuted.wait_for(lock, chrono::milliseconds(100), 
+         [&] { return wasWorked; }));
 }
 // END:thread
