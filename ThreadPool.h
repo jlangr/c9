@@ -11,11 +11,22 @@
 
 class ThreadPool {
 public:
+// START:thread
    virtual ~ThreadPool() {
+// START_HIGHLIGHT
+      stop();
+// END_HIGHLIGHT
+   }
+
+// START_HIGHLIGHT
+   void stop() {
       done_ = true;
       if (workThread_)
          workThread_->join();
    }
+// END_HIGHLIGHT
+// END:thread
+
    void start() {
       workThread_ = std::make_shared<std::thread>(&ThreadPool::worker, this);
    }
@@ -35,18 +46,14 @@ public:
    }
 
 private:
-// START:thread
    void worker() {
       while (!done_) {
-// START_HIGHLIGHT
          while (!done_ && !hasWork()) 
             ;
          if (done_) break;
-// END_HIGHLIGHT
          pullWork().execute();
       }
    }
-// END:thread
 
    std::atomic<bool> done_{false};
    std::deque<Work> workQueue_;

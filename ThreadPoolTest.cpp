@@ -57,40 +57,48 @@ TEST(AThreadPool, HasWorkAfterWorkRemovedButWorkRemains) {
    CHECK_TRUE(pool.hasWork());
 }
 
-TEST(AThreadPool, PullsWorkInAThread) {
-   pool.start();
-   condition_variable wasExecuted;
-   bool wasWorked{0};
-   Work work{[&] { 
-      std::unique_lock<std::mutex> lock(m); 
-      wasWorked = true;
-      wasExecuted.notify_all(); 
-   }};
-
-   pool.add(work);
-
-   unique_lock<mutex> lock(m);
-   CHECK_TRUE(wasExecuted.wait_for(lock, chrono::milliseconds(100), 
-         [&] { return wasWorked; }));
-}
-
 // START:thread
-TEST(AThreadPool, ExecutesAllWork) {
-   pool.start();
-   unsigned int count{0};
-   unsigned int NumberOfWorkItems{3};
+TEST_GROUP(AThreadPool_AddRequest) {
+   mutex m;
+   ThreadPool pool;
    condition_variable wasExecuted;
-   Work work{[&] { 
+   unsigned int count{0};
+
+   void setup() {
+      pool.start();
+   }
+   
+   void incrementCountAndNotify() {
       std::unique_lock<std::mutex> lock(m); 
       ++count;
       wasExecuted.notify_all(); 
-   }};
+   }
+
+   void waitForCountAndFailOnTimeout(
+         unsigned int expectedCount, 
+         const milliseconds& time=milliseconds(100)) {
+      unique_lock<mutex> lock(m);
+      CHECK_TRUE(wasExecuted.wait_for(lock, time, 
+            [&] { return expectedCount == count; }));
+   }
+};
+
+TEST(AThreadPool_AddRequest, PullsWorkInAThread) {
+   Work work{[&] { incrementCountAndNotify(); }};
+   unsigned int NumberOfWorkItems{1};
+
+   pool.add(work);
+
+   waitForCountAndFailOnTimeout(NumberOfWorkItems);
+}
+
+TEST(AThreadPool_AddRequest, ExecutesAllWork) {
+   Work work{[&] { incrementCountAndNotify(); }};
+   unsigned int NumberOfWorkItems{3};
 
    for (unsigned int i{0}; i < NumberOfWorkItems; i++)
       pool.add(work);
 
-   unique_lock<mutex> lock(m);
-   CHECK_TRUE(wasExecuted.wait_for(lock, chrono::milliseconds(100), 
-         [&] { return count == NumberOfWorkItems; }));
+   waitForCountAndFailOnTimeout(NumberOfWorkItems);
 }
 // END:thread
