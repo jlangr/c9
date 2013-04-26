@@ -23,12 +23,7 @@ set(testSources
    WorkTest.cpp)
 add_executable(utest testmain.cpp ${testSources} ${sources})
 
-# START:pthread
-# ...
 target_link_libraries(utest CppUTest)
-# START_HIGHLIGHT
 target_link_libraries(utest pthread)
-# END_HIGHLIGHT
-# END:pthread
 
 

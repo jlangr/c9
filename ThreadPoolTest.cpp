@@ -57,7 +57,6 @@ TEST(AThreadPool, HasWorkAfterWorkRemovedButWorkRemains) {
    CHECK_TRUE(pool.hasWork());
 }
 
-// START:thread
 TEST(AThreadPool, PullsWorkInAThread) {
    pool.start();
    condition_variable wasExecuted;
@@ -73,5 +72,25 @@ TEST(AThreadPool, PullsWorkInAThread) {
    unique_lock<mutex> lock(m);
    CHECK_TRUE(wasExecuted.wait_for(lock, chrono::milliseconds(100), 
          [&] { return wasWorked; }));
+}
+
+// START:thread
+TEST(AThreadPool, ExecutesAllWork) {
+   pool.start();
+   unsigned int count{0};
+   unsigned int NumberOfWorkItems{3};
+   condition_variable wasExecuted;
+   Work work{[&] { 
+      std::unique_lock<std::mutex> lock(m); 
+      ++count;
+      wasExecuted.notify_all(); 
+   }};
+
+   for (unsigned int i{0}; i < NumberOfWorkItems; i++)
+      pool.add(work);
+
+   unique_lock<mutex> lock(m);
+   CHECK_TRUE(wasExecuted.wait_for(lock, chrono::milliseconds(100), 
+         [&] { return count == NumberOfWorkItems; }));
 }
 // END:thread

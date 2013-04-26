@@ -4,29 +4,29 @@
 // START:thread
 #include <string>
 #include <deque>
-// START_HIGHLIGHT
 #include <thread>
 #include <memory>
+// START_HIGHLIGHT
+#include <atomic>
 // END_HIGHLIGHT
 
 #include "Work.h"
 
 class ThreadPool {
 public:
-// START_HIGHLIGHT
    virtual ~ThreadPool() {
+// START_HIGHLIGHT
+      done_ = true;
+// END_HIGHLIGHT
       if (workThread_)
          workThread_->join();
    }
-// END_HIGHLIGHT
-
-// START_HIGHLIGHT
+   // ...
+// END:thread
    void start() {
       workThread_ = std::make_shared<std::thread>(&ThreadPool::worker, this);
    }
-// END_HIGHLIGHT
-   // ...
-// END:thread
+
    bool hasWork() {
       return !workQueue_.empty();
    }
@@ -43,18 +43,23 @@ public:
 
 // START:thread
 private:
-// START_HIGHLIGHT
    void worker() {
-      while (!hasWork())
-         ;
-      pullWork().execute();
-   }
-// END_HIGHLIGHT
-
-   std::deque<Work> workQueue_;
 // START_HIGHLIGHT
-   std::shared_ptr<std::thread> workThread_;
+      while (!done_) {
 // END_HIGHLIGHT
+         while (!hasWork())
+            ;
+         pullWork().execute();
+// START_HIGHLIGHT
+      }
+// END_HIGHLIGHT
+   }
+
+// START_HIGHLIGHT
+   std::atomic<bool> done_{false};
+// END_HIGHLIGHT
+   std::deque<Work> workQueue_;
+   std::shared_ptr<std::thread> workThread_;
 };
 // END:thread
 
