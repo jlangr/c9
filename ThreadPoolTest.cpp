@@ -65,14 +65,13 @@ TEST(AThreadPool, PullsWorkInAThread) {
    Work work{[&] { 
       std::unique_lock<std::mutex> lock(m); 
       wasWorked = true;
-      wasExecuted.notify_all(); } 
-   };
+      wasExecuted.notify_all(); 
+   }};
 
    pool.add(work);
 
    unique_lock<mutex> lock(m);
-   LONGS_EQUAL(cv_status::no_timeout, 
-      wasExecuted.wait_for(lock, chrono::milliseconds(100), 
+   CHECK_TRUE(wasExecuted.wait_for(lock, chrono::milliseconds(100), 
          [&] { return wasWorked; }));
 }
 // END:thread
