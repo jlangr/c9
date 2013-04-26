@@ -120,15 +120,16 @@ TEST(AThreadPool_AddRequest, ExecutesAllWork) {
 TEST(AThreadPool_AddRequest, HoldsUpUnderClientStress) {
    Work work{[&] { incrementCountAndNotify(); }};
    unsigned int NumberOfWorkItems{10};
-   unsigned int NumberOfThreads{10};
+   unsigned int NumberOfThreads{100};
 
-   for (unsigned int i{0}; i < NumberOfWorkItems; i++)
+   for (unsigned int i{0}; i < NumberOfThreads; i++)
       threads.push_back(
           make_shared<thread>([&] { 
              for (unsigned int j{0}; j < NumberOfWorkItems; j++)
                pool.add(work); 
           }));
 
-   waitForCountAndFailOnTimeout(NumberOfThreads * NumberOfWorkItems);
+   waitForCountAndFailOnTimeout(
+         NumberOfThreads * NumberOfWorkItems);
 }
 // END:thread
