@@ -39,7 +39,7 @@ public:
    Work pullWork() {
       std::lock_guard<std::mutex> block(mutex_);
 
-      if (workQueue_.empty()) return Work{};
+//      if (workQueue_.empty()) return Work{};
 
       auto work = workQueue_.back();
       workQueue_.pop_back();

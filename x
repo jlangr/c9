@@ -7,8 +7,8 @@ fi
 
 for ((i = 1; i <= $COUNT; i++))
 do
-#   echo -n $i-
-   build/utest >/dev/null 2>out.txt
+   echo -n $i-
+   build/utest >out.txt 2>out.txt
    if [ "$?" -ne "0" ]; then
       echo $i failed:
       cat out.txt

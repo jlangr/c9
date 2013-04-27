@@ -119,7 +119,7 @@ TEST(AThreadPool_AddRequest, ExecutesAllWork) {
 // START:thread
 TEST(AThreadPool_AddRequest, HoldsUpUnderClientStress) {
    Work work{[&] { incrementCountAndNotify(); }};
-   unsigned int NumberOfWorkItems{10};
+   unsigned int NumberOfWorkItems{100};
    unsigned int NumberOfThreads{100};
 
    for (unsigned int i{0}; i < NumberOfThreads; i++)
