@@ -134,3 +134,15 @@ IGNORE_TEST(AGeoServer_UsersInBox, HandlesLargeNumbersOfUsers) {
    CHECK_EQUAL(lots, users.size());
 }
 
+// START:callback
+TEST(AGeoServer_UsersInBox, AnswersUsersInRangeViaCallback) {
+   vector<User> users;
+   auto userCallback = [&] (User user) { users.push_back(user); };
+   server.updateLocation(
+      bUser, Location{aUserLocation.go(Width / 2 - TenMeters, East)}); 
+
+   server.usersInBox(aUser, Width, Height, userCallback);
+
+   CHECK_EQUAL(vector<string> { bUser }, UserNames(users));
+}
+// END:callback

@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <functional>
 
 #include "Location.h"
 #include "Area.h"
@@ -22,6 +23,9 @@ public:
          const std::string& user,
          const Area& box) const;
    std::vector<User> usersInBox(const std::string& user, double widthInMeters, double heightInMeters) const;
+   void usersInBox(const std::string& user, 
+         double widthInMeters, double heightInMeters,
+         std::function<void(User)> foundUserFunction) const;
 
 private:
    std::unordered_map<std::string, Location> locations_;

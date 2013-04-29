@@ -50,3 +50,16 @@ vector<User> GeoServer::usersInBox(
    return users;
 }
 
+// START:callback
+void GeoServer::usersInBox(
+      const string& user, double widthInMeters, double heightInMeters,
+      function<void(User)> foundUserFunction) const {
+   Location location = locations_.find(user)->second;
+   Area box { location, widthInMeters, heightInMeters };
+
+   for (auto& each: locations_) 
+      if (isDifferentUserInBounds(each, user, box))
+         foundUserFunction(User{each.first, each.second});
+}
+// END:callback
+
