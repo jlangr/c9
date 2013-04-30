@@ -35,7 +35,9 @@ TEST_GROUP(AGeoServer) {
 
 // START:assertfirst
 TEST(AGeoServer, AnswersUnknownLocationWhenUserNoLongerTracked) {
+// START_HIGHLIGHT
    server.track(aUser);
+// END_HIGHLIGHT
 
    server.stopTracking(aUser);
 
