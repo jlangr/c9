@@ -40,7 +40,7 @@ bool GeoServer::isDifferentUserInBounds(
 
 vector<User> GeoServer::usersInBox(
       const string& user, double widthInMeters, double heightInMeters) const {
-   Location location = locations_.find(user)->second;
+   auto location = locations_.find(user)->second;
    Area box { location, widthInMeters, heightInMeters };
 
    vector<User> users;
