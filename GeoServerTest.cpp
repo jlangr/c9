@@ -72,8 +72,11 @@ TEST(AGeoServer, AnswersUnknownLocationForUserNoLongerTracked) {
    CHECK_TRUE(server.locationOf(aUser).isUnknown());
 }
 
+// START:pool
 TEST_GROUP(AGeoServer_UsersInBox) {
    GeoServer server;
+   // ...
+// END:pool
 
    const double TenMeters { 10 };
    const double Width { 2000 + TenMeters };
@@ -90,6 +93,7 @@ TEST_GROUP(AGeoServer_UsersInBox) {
       vector<User> Users;
    } trackingListener;
 
+// START:pool
    class SingleThreadedPool: public ThreadPool {
    public:
       virtual void add(Work work) override { work.execute(); }
@@ -99,17 +103,22 @@ TEST_GROUP(AGeoServer_UsersInBox) {
    void setup() {
       pool = make_shared<SingleThreadedPool>();
       server.useThreadPool(pool);
-
+      // ...
+// END:pool
       server.track(aUser);
       server.track(bUser);
       server.track(cUser);
 
       server.updateLocation(aUser, aUserLocation);
+// START:pool
    }
+   // ...
+// END:pool
 
    vector<string> UserNames(const vector<User>& users) {
       return Collect<User,string>(users, [](User each) { return each.name(); });
    }
+// START:pool
 };
 
 TEST(AGeoServer_UsersInBox, AnswersUsersInSpecifiedRange) {
@@ -121,6 +130,7 @@ TEST(AGeoServer_UsersInBox, AnswersUsersInSpecifiedRange) {
 
    CHECK_EQUAL(vector<string> { bUser }, UserNames(trackingListener.Users));
 }
+// END:pool
 
 TEST(AGeoServer_UsersInBox, AnswersOnlyUsersWithinSpecifiedRange) {
    pool->start(0);

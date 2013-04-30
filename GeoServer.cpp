@@ -41,6 +41,7 @@ bool GeoServer::isDifferentUserInBounds(
    return box.inBounds(each.second);
 }
 
+// START:pool
 void GeoServer::usersInBox(
       const string& user, double widthInMeters, double heightInMeters,
       GeoServerListener* listener) const {
@@ -49,16 +50,19 @@ void GeoServer::usersInBox(
 
    for (auto& each: locations_) {
       Work work{[&] {
-         if (isDifferentUserInBounds(each, user, box)) {
-            if (listener)
-               listener->updated(User{each.first, each.second});
-         }
+         if (isDifferentUserInBounds(each, user, box)) 
+            listener->updated(User{each.first, each.second});
       }};
+// START_HIGHLIGHT
       pool_->add(work);
+// END_HIGHLIGHT
    }
 }
 
+// START_HIGHLIGHT
 void GeoServer::useThreadPool(std::shared_ptr<ThreadPool> pool) {
    pool_ = pool;
 }
+// END_HIGHLIGHT
+// END:pool
 
