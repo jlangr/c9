@@ -4,6 +4,8 @@
 #include "GeoServer.h"
 #include "VectorUtil.h"
 #include "TestTimer.h"
+#include "ThreadPool.h"
+#include "Work.h"
 
 using namespace std;
 
@@ -88,7 +90,16 @@ TEST_GROUP(AGeoServer_UsersInBox) {
       vector<User> Users;
    } trackingListener;
 
+   class SingleThreadedPool: public ThreadPool {
+   public:
+      virtual void add(Work work) override { work.execute(); }
+   };
+   shared_ptr<ThreadPool> pool;
+
    void setup() {
+      pool = make_shared<SingleThreadedPool>();
+      server.useThreadPool(pool);
+
       server.track(aUser);
       server.track(bUser);
       server.track(cUser);
@@ -102,6 +113,7 @@ TEST_GROUP(AGeoServer_UsersInBox) {
 };
 
 TEST(AGeoServer_UsersInBox, AnswersUsersInSpecifiedRange) {
+   pool->start(0);
    server.updateLocation(
       bUser, Location{aUserLocation.go(Width / 2 - TenMeters, East)}); 
 
@@ -111,6 +123,7 @@ TEST(AGeoServer_UsersInBox, AnswersUsersInSpecifiedRange) {
 }
 
 TEST(AGeoServer_UsersInBox, AnswersOnlyUsersWithinSpecifiedRange) {
+   pool->start(0);
    server.updateLocation(
       bUser, Location{aUserLocation.go(Width / 2 + TenMeters, East)}); 
    server.updateLocation(
@@ -122,6 +135,7 @@ TEST(AGeoServer_UsersInBox, AnswersOnlyUsersWithinSpecifiedRange) {
 }
 
 IGNORE_TEST(AGeoServer_UsersInBox, HandlesLargeNumbersOfUsers) {
+   pool->start(0);
    Location anotherLocation{aUserLocation.go(10, West)};
    const unsigned int lots {500000};
    for (unsigned int i{0}; i < lots; i++) {

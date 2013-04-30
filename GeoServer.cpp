@@ -1,6 +1,9 @@
 #include "GeoServer.h"
 #include "Location.h"
 
+
+#include <iostream>
+
 using namespace std;
 
 void GeoServer::track(const string& user) {
@@ -44,10 +47,18 @@ void GeoServer::usersInBox(
    auto location = locations_.find(user)->second;
    Area box { location, widthInMeters, heightInMeters };
 
-   for (auto& each: locations_) 
-      if (isDifferentUserInBounds(each, user, box)) {
-         if (listener)
-            listener->updated(User{each.first, each.second});
-      }
+   for (auto& each: locations_) {
+      Work work{[&] {
+         if (isDifferentUserInBounds(each, user, box)) {
+            if (listener)
+               listener->updated(User{each.first, each.second});
+         }
+      }};
+      pool_->add(work);
+   }
+}
+
+void GeoServer::useThreadPool(std::shared_ptr<ThreadPool> pool) {
+   pool_ = pool;
 }
 
