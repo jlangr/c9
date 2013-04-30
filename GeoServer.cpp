@@ -38,30 +38,23 @@ bool GeoServer::isDifferentUserInBounds(
    return box.inBounds(each.second);
 }
 
-vector<User> GeoServer::usersInBox(
-      const string& user, double widthInMeters, double heightInMeters) const {
-   auto location = locations_.find(user)->second;
-   Area box { location, widthInMeters, heightInMeters };
-
-   vector<User> users;
-   for (auto& each: locations_) 
-      if (isDifferentUserInBounds(each, user, box))
-         users.push_back(User{each.first, each.second});
-   return users;
-}
-
 // START:callback
-void GeoServer::usersInBox(
+vector<User> GeoServer::usersInBox(
       const string& user, double widthInMeters, double heightInMeters,
       GeoServerListener* listener) const {
    auto location = locations_.find(user)->second;
    Area box { location, widthInMeters, heightInMeters };
 
+   vector<User> users;
    for (auto& each: locations_) 
-      if (isDifferentUserInBounds(each, user, box))
+      if (isDifferentUserInBounds(each, user, box)) {
+         users.push_back(User{each.first, each.second});
 // START_HIGHLIGHT
-         listener->updated(User{each.first, each.second});
+         if (listener)
+            listener->updated(User{each.first, each.second});
 // END_HIGHLIGHT
+      }
+   return users;
 }
 // END:callback
 

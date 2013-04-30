@@ -30,11 +30,10 @@ public:
          const std::pair<std::string, Location>& each,
          const std::string& user,
          const Area& box) const;
-   std::vector<User> usersInBox(const std::string& user, double widthInMeters, double heightInMeters) const;
 // START:callback
-   void usersInBox(const std::string& user, 
-         double widthInMeters, double heightInMeters,
-         GeoServerListener*) const;
+   std::vector<User> usersInBox(
+         const std::string& user, double widthInMeters, double heightInMeters,
+         GeoServerListener* listener=nullptr) const;
    // ...
 // END:callback
 
