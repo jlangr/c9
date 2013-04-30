@@ -99,14 +99,26 @@ TEST_GROUP(AGeoServer_UsersInBox) {
    }
 };
 
+// START:callback
 TEST(AGeoServer_UsersInBox, AnswersUsersInSpecifiedRange) {
+// START_HIGHLIGHT
+   class GeoServerUserTrackingListener: public GeoServerListener {
+   public:
+      void updated(const User& user) { Users.push_back(user); }
+      vector<User> Users;
+   } trackingListener;
+// END_HIGHLIGHT
+
    server.updateLocation(
       bUser, Location{aUserLocation.go(Width / 2 - TenMeters, East)}); 
 
-   auto users = server.usersInBox(aUser, Width, Height);
+// START_HIGHLIGHT
+   server.usersInBox(aUser, Width, Height, &trackingListener);
+// END_HIGHLIGHT
 
-   CHECK_EQUAL(vector<string> { bUser }, UserNames(users));
+   CHECK_EQUAL(vector<string> { bUser }, UserNames(trackingListener.Users));
 }
+// END:callback
 
 TEST(AGeoServer_UsersInBox, AnswersOnlyUsersWithinSpecifiedRange) {
    server.updateLocation(
@@ -134,19 +146,3 @@ IGNORE_TEST(AGeoServer_UsersInBox, HandlesLargeNumbersOfUsers) {
    CHECK_EQUAL(lots, users.size());
 }
 
-// START:callback
-TEST(AGeoServer_UsersInBox, AnswersUsersInRangeViaCallback) {
-   class GeoServerUserTrackingListener: public GeoServerListener {
-   public:
-      void updated(const User& user) { Users.push_back(user); }
-      vector<User> Users;
-   } trackingListener;
-
-   server.updateLocation(
-      bUser, Location{aUserLocation.go(Width / 2 - TenMeters, East)}); 
-
-   server.usersInBox(aUser, Width, Height, &trackingListener);
-
-   CHECK_EQUAL(vector<string> { bUser }, UserNames(trackingListener.Users));
-}
-// END:callback
