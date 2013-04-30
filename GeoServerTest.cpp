@@ -31,7 +31,8 @@ TEST(AGeoServer, AnswersUnknownLocationWhenUserNoLongerTracked) {
 
    server.stopTracking(aUser);
 
-   CHECK_TRUE(server.locationOf(aUser).isUnknown());
+   auto location = server.locationOf(aUser);
+   CHECK_EQUAL(numeric_limits<double>::infinity(), location.latitude());
 }
 // END:assertfirst
 
