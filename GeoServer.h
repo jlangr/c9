@@ -29,7 +29,7 @@ public:
          const Area& box) const;
    void usersInBox(
          const std::string& user, double widthInMeters, double heightInMeters,
-         GeoServerListener* listener=nullptr) const;
+         GeoServerListener* listener) const;
 
 private:
    std::unordered_map<std::string, Location> locations_;

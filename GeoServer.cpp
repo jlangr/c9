@@ -45,9 +45,7 @@ void GeoServer::usersInBox(
    Area box { location, widthInMeters, heightInMeters };
 
    for (auto& each: locations_) 
-      if (isDifferentUserInBounds(each, user, box)) {
-         if (listener)
-            listener->updated(User{each.first, each.second});
-      }
+      if (isDifferentUserInBounds(each, user, box)) 
+         listener->updated(User{each.first, each.second});
 }
 
