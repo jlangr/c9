@@ -31,6 +31,7 @@ TEST(AGeoServer, AnswersUnknownLocationWhenUserNoLongerTracked) {
 
    server.stopTracking(aUser);
 
+   // slow reading. Fix this.
    auto location = server.locationOf(aUser);
    CHECK_EQUAL(numeric_limits<double>::infinity(), location.latitude());
 }
