@@ -20,8 +20,8 @@ void GeoServer::updateLocation(const string& user, const Location& location) {
 }
 
 Location GeoServer::locationOf(const string& user) const {
-   if (!isTracking(user)) return Location(); // TODO performance cost?
-
+   auto location = find(user);
+   if (location == locations_.end()) return Location{};
    return find(user)->second;
 }
 
@@ -38,23 +38,16 @@ bool GeoServer::isDifferentUserInBounds(
    return box.inBounds(each.second);
 }
 
-// START:callback
-vector<User> GeoServer::usersInBox(
+void GeoServer::usersInBox(
       const string& user, double widthInMeters, double heightInMeters,
       GeoServerListener* listener) const {
    auto location = locations_.find(user)->second;
    Area box { location, widthInMeters, heightInMeters };
 
-   vector<User> users;
    for (auto& each: locations_) 
       if (isDifferentUserInBounds(each, user, box)) {
-         users.push_back(User{each.first, each.second});
-// START_HIGHLIGHT
          if (listener)
             listener->updated(User{each.first, each.second});
-// END_HIGHLIGHT
       }
-   return users;
 }
-// END:callback
 
