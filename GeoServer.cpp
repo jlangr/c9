@@ -23,7 +23,6 @@ void GeoServer::updateLocation(const string& user, const Location& location) {
 }
 
 Location GeoServer::locationOf(const string& user) const {
-   if (!isTracking(user)) return Location{}; // TODO performance cost?
 
    return find(user)->second;
 }
@@ -41,7 +40,6 @@ bool GeoServer::isDifferentUserInBounds(
    return box.inBounds(each.second);
 }
 
-// START:pool
 void GeoServer::usersInBox(
       const string& user, double widthInMeters, double heightInMeters,
       GeoServerListener* listener) const {
@@ -53,16 +51,11 @@ void GeoServer::usersInBox(
          if (isDifferentUserInBounds(each, user, box)) 
             listener->updated(User{each.first, each.second});
       }};
-// START_HIGHLIGHT
       pool_->add(work);
-// END_HIGHLIGHT
    }
 }
 
-// START_HIGHLIGHT
 void GeoServer::useThreadPool(std::shared_ptr<ThreadPool> pool) {
    pool_ = pool;
 }
-// END_HIGHLIGHT
-// END:pool
 
