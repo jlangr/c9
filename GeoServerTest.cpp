@@ -77,7 +77,8 @@ TEST(AGeoServer, AnswersUnknownLocationForUserNoLongerTracked) {
    CHECK_TRUE(server.locationOf(aUser).isUnknown());
 }
 
-TEST_GROUP(AGeoServer_UsersInBox) {
+class GeoServerUsersInBoxTests: public Utest {
+public:
    GeoServer server;
 
    const double TenMeters { 10 };
@@ -89,6 +90,28 @@ TEST_GROUP(AGeoServer_UsersInBox) {
 
    Location aUserLocation { 38, -103 };
 
+   shared_ptr<ThreadPool> pool;
+
+   virtual void setup() {
+      server.useThreadPool(pool);
+
+      server.track(aUser);
+      server.track(bUser);
+      server.track(cUser);
+
+      server.updateLocation(aUser, aUserLocation);
+   }
+
+   void addUsersAt(unsigned int number, const Location& location) {
+      for (unsigned int i{0}; i < number; i++) {
+         string user{"user" + to_string(i)};
+         server.track(user);
+         server.updateLocation(user, location);
+      }
+   }
+};
+
+TEST_GROUP_BASE(AGeoServer_UsersInBox, GeoServerUsersInBoxTests) {
    class GeoServerUserTrackingListener: public GeoServerListener {
    public:
       void updated(const User& user) { Users.push_back(user); }
@@ -99,16 +122,10 @@ TEST_GROUP(AGeoServer_UsersInBox) {
    public:
       virtual void add(Work work) override { work.execute(); }
    };
-   shared_ptr<ThreadPool> pool;
 
    void setup() {
       pool = make_shared<SingleThreadedPool>();
-      server.useThreadPool(pool);
-      server.track(aUser);
-      server.track(bUser);
-      server.track(cUser);
-
-      server.updateLocation(aUser, aUserLocation);
+      GeoServerUsersInBoxTests::setup();
    }
 
    vector<string> UserNames(const vector<User>& users) {
@@ -138,15 +155,10 @@ TEST(AGeoServer_UsersInBox, AnswersOnlyUsersWithinSpecifiedRange) {
    CHECK_EQUAL(vector<string> { cUser }, UserNames(trackingListener.Users));
 }
 
-IGNORE_TEST(AGeoServer_UsersInBox, HandlesLargeNumbersOfUsers) {
+TEST(AGeoServer_UsersInBox, HandlesLargeNumbersOfUsers) {
    pool->start(0);
-   Location anotherLocation{aUserLocation.go(10, West)};
-   const unsigned int lots {500000};
-   for (unsigned int i{0}; i < lots; i++) {
-      string user{"user" + to_string(i)};
-      server.track(user);
-      server.updateLocation(user, anotherLocation);
-   }
+   const unsigned int lots {5000};
+   addUsersAt(lots, Location{aUserLocation.go(TenMeters, West)});
 
    TestTimer timer;
    server.usersInBox(aUser, Width, Height, &trackingListener);
@@ -154,84 +166,48 @@ IGNORE_TEST(AGeoServer_UsersInBox, HandlesLargeNumbersOfUsers) {
    CHECK_EQUAL(lots, trackingListener.Users.size());
 }
 
-mutex mm;
-
-TEST_GROUP(AGeoServer_ScaleTests) {
-   GeoServer server;
-
-   const double TenMeters { 10 };
-   const double Width { 2000 + TenMeters };
-   const double Height { 4000 + TenMeters};
-   const string aUser { "auser" };
-   const string bUser { "buser" };
-   const string cUser { "cuser" };
-
-   Location aUserLocation { 38, -103 };
-   condition_variable wasExecuted;
-
+TEST_GROUP_BASE(AGeoServer_ScaleTests, GeoServerUsersInBoxTests) {
    class GeoServerCountingListener: public GeoServerListener {
    public:
-      GeoServerCountingListener(condition_variable* condition) 
-         : condition_{condition} {}
-
       void updated(const User& user) override {
-         unique_lock<std::mutex> lock(mm);
+         unique_lock<std::mutex> lock(mutex_);
          Count++;
-         condition_->notify_all();
+         wasExecuted_.notify_all();
       }
 
       void waitForCountAndFailOnTimeout(unsigned int expectedCount, 
             const milliseconds& time=milliseconds(10000)) {
-         unique_lock<mutex> lock(mm);
-         CHECK_TRUE(condition_->wait_for(lock, time, 
-             [&] { return expectedCount == Count; }));
+         unique_lock<mutex> lock(mutex_);
+         CHECK_TRUE(wasExecuted_.wait_for(lock, time, [&] 
+                  { return expectedCount == Count; }));
       }
 
-      condition_variable* condition_;
+      condition_variable wasExecuted_;
       unsigned int Count{0};
+      mutex mutex_;
    };
 
-   GeoServerCountingListener countingListener{&wasExecuted};
-   shared_ptr<ThreadPool> pool { make_shared<ThreadPool>() };
+   GeoServerCountingListener countingListener;
    shared_ptr<thread> t;
 
    void setup() {
-      server.track(aUser);
-      server.track(bUser);
-      server.track(cUser);
-
-      server.updateLocation(aUser, aUserLocation);
-      
-      server.useThreadPool(pool);
+      pool = make_shared<ThreadPool>();
+      GeoServerUsersInBoxTests::setup();
    }
 
    void teardown() {
       t->join();
-   }
-
-   void addUsersAt(unsigned int number, const Location& location) {
-      for (unsigned int i{0}; i < number; i++) {
-         string user{"user" + to_string(i)};
-         server.track(user);
-         server.updateLocation(user, location);
-      }
    }
 };
 
 TEST(AGeoServer_ScaleTests, HandlesLargeNumbersOfUsers) {
    pool->start(4);
    const unsigned int lots{5000};
-   Location anotherLocation{aUserLocation.go(TenMeters, West)};
-   for (unsigned int i{0}; i < lots; i++) {
-      string user{"user" + to_string(i)};
-      server.track(user);
-      server.updateLocation(user, anotherLocation);
-   }
+   addUsersAt(lots, Location{aUserLocation.go(TenMeters, West)});
 
    t = make_shared<thread>(
          [&] { server.usersInBox(aUser, Width, Height, &countingListener); });
 
    countingListener.waitForCountAndFailOnTimeout(lots);
 }
-
 
