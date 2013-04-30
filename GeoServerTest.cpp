@@ -32,7 +32,10 @@ TEST_GROUP(AGeoServer) {
 };
 // END:assertfirsthelper
 
+// START:assertFirst
 TEST(AGeoServer, AnswersUnknownLocationWhenUserNoLongerTracked) {
+   server.stopTracking(aUser);
+
    CHECK_TRUE(locationIsUnknown(aUser));
 }
 // END:assertfirst
