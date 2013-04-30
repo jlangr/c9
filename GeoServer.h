@@ -10,8 +10,16 @@
 #include "Area.h"
 #include "User.h"
 
+// START:callback
+class GeoServerListener {
+public:
+   virtual void updated(const User& user)=0;
+};
+
 class GeoServer {
 public:
+   // ...
+// END:callback
    void track(const std::string& user);
    void stopTracking(const std::string& user);
    void updateLocation(const std::string& user, const Location& location);
@@ -23,15 +31,20 @@ public:
          const std::string& user,
          const Area& box) const;
    std::vector<User> usersInBox(const std::string& user, double widthInMeters, double heightInMeters) const;
+// START:callback
    void usersInBox(const std::string& user, 
          double widthInMeters, double heightInMeters,
-         std::function<void(User)> foundUserFunction) const;
+         GeoServerListener*) const;
+   // ...
+// END:callback
 
 private:
    std::unordered_map<std::string, Location> locations_;
 
    std::unordered_map<std::string, Location>::const_iterator 
       find(const std::string& user) const;
+// START:callback
 };
+// END:callback
 
 #endif

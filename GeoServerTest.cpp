@@ -136,13 +136,17 @@ IGNORE_TEST(AGeoServer_UsersInBox, HandlesLargeNumbersOfUsers) {
 
 // START:callback
 TEST(AGeoServer_UsersInBox, AnswersUsersInRangeViaCallback) {
-   vector<User> users;
-   auto userCallback = [&] (User user) { users.push_back(user); };
+   class GeoServerUserTrackingListener: public GeoServerListener {
+   public:
+      void updated(const User& user) { Users.push_back(user); }
+      vector<User> Users;
+   } trackingListener;
+
    server.updateLocation(
       bUser, Location{aUserLocation.go(Width / 2 - TenMeters, East)}); 
 
-   server.usersInBox(aUser, Width, Height, userCallback);
+   server.usersInBox(aUser, Width, Height, &trackingListener);
 
-   CHECK_EQUAL(vector<string> { bUser }, UserNames(users));
+   CHECK_EQUAL(vector<string> { bUser }, UserNames(trackingListener.Users));
 }
 // END:callback
