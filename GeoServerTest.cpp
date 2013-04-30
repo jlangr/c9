@@ -26,7 +26,8 @@ TEST_GROUP(AGeoServer) {
 // START:assertfirsthelper
 // START_HIGHLIGHT
    bool locationIsUnknown(const string& user) {
-      return server.locationOf(user).isUnknown();
+      auto location = server.locationOf(user);
+      return location.latitude() == numeric_limits<double>::infinity();
    }
 // END_HIGHLIGHT
 };
