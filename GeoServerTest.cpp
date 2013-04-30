@@ -56,7 +56,7 @@ TEST(AGeoServer, UpdatesLocationOfUser) {
 }
 
 TEST(AGeoServer, AnswersUnknownLocationForUserNotTracked) {
-   CHECK_TRUE(server.locationOf("aAbUser").isUnknown());
+   CHECK_TRUE(server.locationOf("anAbUser").isUnknown());
 }
 
 TEST(AGeoServer, AnswersUnknownLocationForTrackedUserWithNoLocationUpdate) {
