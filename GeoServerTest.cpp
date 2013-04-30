@@ -14,12 +14,28 @@
 using namespace std;
 using std::chrono::milliseconds;
 
+// START:assertfirsthelper
 TEST_GROUP(AGeoServer) {
+   // ...
+// END:assertfirsthelper
    GeoServer server;
 
    const string aUser{"auser"};
    const double LocationTolerance{0.005};
+
+// START:assertfirsthelper
+// START_HIGHLIGHT
+   bool locationIsUnknown(const string& user) {
+      return false;
+   }
+// END_HIGHLIGHT
 };
+// END:assertfirsthelper
+
+TEST(AGeoServer, AnswersUnknownLocationWhenUserNoLongerTracked) {
+   CHECK_TRUE(locationIsUnknown(aUser));
+}
+// END:assertfirst
 
 TEST(AGeoServer, TracksAUser) {
    server.track(aUser);
