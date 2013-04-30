@@ -32,6 +32,7 @@ TEST_GROUP(AGeoServer) {
 };
 // END:assertfirsthelper
 
+// START:assertfirst
 TEST(AGeoServer, AnswersUnknownLocationWhenUserNoLongerTracked) {
    CHECK_TRUE(locationIsUnknown(aUser));
 }
