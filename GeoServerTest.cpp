@@ -25,7 +25,7 @@ TEST_GROUP(AGeoServer) {
 };
 // END:assertfirsthelper
 
-// START:assertFirst
+// START:assertfirst
 TEST(AGeoServer, AnswersUnknownLocationWhenUserNoLongerTracked) {
    server.track(aUser);
 
