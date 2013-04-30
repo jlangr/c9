@@ -116,7 +116,9 @@ TEST(AGeoServer_UsersInBox, AnswersUsersInSpecifiedRange) {
    server.usersInBox(aUser, Width, Height, &trackingListener);
 // END_HIGHLIGHT
 
+// START_HIGHLIGHT
    CHECK_EQUAL(vector<string> { bUser }, UserNames(trackingListener.Users));
+// END_HIGHLIGHT
 }
 // END:callback
 

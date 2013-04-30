@@ -54,12 +54,14 @@ vector<User> GeoServer::usersInBox(
 void GeoServer::usersInBox(
       const string& user, double widthInMeters, double heightInMeters,
       GeoServerListener* listener) const {
-   Location location = locations_.find(user)->second;
+   auto location = locations_.find(user)->second;
    Area box { location, widthInMeters, heightInMeters };
 
    for (auto& each: locations_) 
       if (isDifferentUserInBounds(each, user, box))
+// START_HIGHLIGHT
          listener->updated(User{each.first, each.second});
+// END_HIGHLIGHT
 }
 // END:callback
 
