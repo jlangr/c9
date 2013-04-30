@@ -166,6 +166,7 @@ TEST(AGeoServer_UsersInBox, HandlesLargeNumbersOfUsers) {
    CHECK_EQUAL(lots, trackingListener.Users.size());
 }
 
+// START:pool
 TEST_GROUP_BASE(AGeoServer_ScaleTests, GeoServerUsersInBoxTests) {
    class GeoServerCountingListener: public GeoServerListener {
    public:
@@ -210,4 +211,5 @@ TEST(AGeoServer_ScaleTests, HandlesLargeNumbersOfUsers) {
 
    countingListener.waitForCountAndFailOnTimeout(lots);
 }
+// END:pool
 
