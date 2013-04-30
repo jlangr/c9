@@ -26,7 +26,8 @@ TEST_GROUP(AGeoServer) {
 // START:assertfirsthelper
 // START_HIGHLIGHT
    bool locationIsUnknown(const string& user) {
-      return false;
+      auto location = server.locationOf(user);
+      return location.latitude() == numeric_limits<double>::infinity();
    }
 // END_HIGHLIGHT
 };
@@ -34,6 +35,8 @@ TEST_GROUP(AGeoServer) {
 
 // START:assertFirst
 TEST(AGeoServer, AnswersUnknownLocationWhenUserNoLongerTracked) {
+   server.track(aUser);
+
    server.stopTracking(aUser);
 
    CHECK_TRUE(locationIsUnknown(aUser));
