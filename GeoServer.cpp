@@ -20,7 +20,7 @@ void GeoServer::updateLocation(const string& user, const Location& location) {
 }
 
 Location GeoServer::locationOf(const string& user) const {
-   if (!isTracking(user)) return Location(); // TODO performance cost?
+   if (!isTracking(user)) return Location{}; // TODO performance cost?
 
    return find(user)->second;
 }
