@@ -20,8 +20,8 @@ void GeoServer::updateLocation(const string& user, const Location& location) {
 }
 
 Location GeoServer::locationOf(const string& user) const {
-   auto location = find(user);
-   if (location == locations_.end()) return Location{};
+   if (!isTracking(user)) return Location{}; // TODO performance cost?
+
    return find(user)->second;
 }
 
