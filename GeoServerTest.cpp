@@ -22,13 +22,6 @@ TEST_GROUP(AGeoServer) {
 
    const string aUser{"auser"};
    const double LocationTolerance{0.005};
-
-// START:assertfirsthelper
-// START_HIGHLIGHT
-   bool locationIsUnknown(const string& user) {
-      return server.locationOf(user).isUnknown();
-   }
-// END_HIGHLIGHT
 };
 // END:assertfirsthelper
 
@@ -38,7 +31,7 @@ TEST(AGeoServer, AnswersUnknownLocationWhenUserNoLongerTracked) {
 
    server.stopTracking(aUser);
 
-   CHECK_TRUE(locationIsUnknown(aUser));
+   CHECK_TRUE(server.locationOf(aUser).isUnknown());
 }
 // END:assertfirst
 
