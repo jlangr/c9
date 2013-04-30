@@ -31,7 +31,7 @@ public:
          const Area& box) const;
    void usersInBox(
          const std::string& user, double widthInMeters, double heightInMeters,
-         GeoServerListener* listener=nullptr) const;
+         GeoServerListener* listener) const;
    void useThreadPool(std::shared_ptr<ThreadPool> pool);
 
 private:
