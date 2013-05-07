@@ -7,7 +7,7 @@
 struct TestTimer {
    TestTimer();
    TestTimer(const std::string& text);
-   ~TestTimer();
+   virtual ~TestTimer();
 
    std::chrono::time_point<std::chrono::system_clock> Start;
    std::chrono::time_point<std::chrono::system_clock> Stop;

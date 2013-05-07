@@ -118,9 +118,13 @@ public:
       server.updateLocation(aUser, aUserLocation);
    }
 
+   string userName(unsigned int i) {
+      return string{"user" + to_string(i)};
+   }
+
    void addUsersAt(unsigned int number, const Location& location) {
       for (unsigned int i{0}; i < number; i++) {
-         string user{"user" + to_string(i)};
+         string user = userName(i);
          server.track(user);
          server.updateLocation(user, location);
       }
@@ -217,6 +221,9 @@ TEST_GROUP_BASE(AGeoServer_ScaleTests, GeoServerUsersInBoxTests) {
    }
 };
 
+TEST_GROUP_BASE(AGeoServer_Performance, GeoServerUsersInBoxTests) {
+};
+
 TEST(AGeoServer_ScaleTests, HandlesLargeNumbersOfUsers) {
    pool->start(4);
    const unsigned int lots{5000};
@@ -227,5 +234,16 @@ TEST(AGeoServer_ScaleTests, HandlesLargeNumbersOfUsers) {
 
    countingListener.waitForCountAndFailOnTimeout(lots);
 }
+
+// START:test
+TEST(AGeoServer_Performance, LocationOf) {
+   const unsigned int lots{50000};
+   addUsersAt(lots, Location{aUserLocation.go(TenMeters, West)});
+
+   TestTimer t;
+   for (unsigned int i{0}; i < lots; i++) 
+      server.locationOf(userName(i));
+}
+// END:test
 // END:pool
 
