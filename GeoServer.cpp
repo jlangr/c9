@@ -14,10 +14,12 @@ void GeoServer::stopTracking(const string& user) {
    locations_.erase(user);
 }
 
+// START:impl
 bool GeoServer::isTracking(const string& user) const {
    return find(user) != locations_.end();
 }
 
+// END:impl
 void GeoServer::updateLocation(const string& user, const Location& location) {
    locations_[user] = location;
 }
