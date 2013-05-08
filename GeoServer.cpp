@@ -25,7 +25,7 @@ void GeoServer::updateLocation(const string& user, const Location& location) {
 // START:impl
 Location GeoServer::locationOf(const string& user) const {
    // optimized
-   auto it = locations_.find(user);
+   auto it = find(user);
    if (it == locations_.end()) return Location{};
    return it->second;
 }

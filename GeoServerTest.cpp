@@ -235,7 +235,6 @@ TEST(AGeoServer_ScaleTests, HandlesLargeNumbersOfUsers) {
    countingListener.waitForCountAndFailOnTimeout(lots);
 }
 
-// START:test
 TEST(AGeoServer_Performance, LocationOf) {
    const unsigned int lots{500000};
    addUsersAt(lots, Location{aUserLocation.go(TenMeters, West)});
@@ -244,6 +243,5 @@ TEST(AGeoServer_Performance, LocationOf) {
    for (unsigned int i{0}; i < lots; i++) 
       server.locationOf(userName(i));
 }
-// END:test
 // END:pool
 

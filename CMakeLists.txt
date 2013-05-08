@@ -6,7 +6,7 @@ link_directories($ENV{CPPUTEST_HOME}/lib)
 
 add_definitions(-g -std=c++0x)
 
-set(CMAKE_CXX_FLAGS "${CMAXE_CXX_FLAGS} -Wall")
+set(CMAKE_CXX_FLAGS "${CMAXE_CXX_FLAGS} -Wall -Winline")
 set(sources 
    Area.cpp
    GeoServer.cpp
