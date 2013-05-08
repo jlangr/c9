@@ -235,6 +235,18 @@ TEST(AGeoServer_ScaleTests, HandlesLargeNumbersOfUsers) {
    countingListener.waitForCountAndFailOnTimeout(lots);
 }
 
+TEST_GROUP_BASE(AGeoServer_VirtualPerformance, GeoServerUsersInBoxTests) {};
+
+TEST(AGeoServer_VirtualPerformance, VirtualLocationOf) {
+   shared_ptr<GeoServerBase> server = make_shared<GeoServer>();
+   const unsigned int lots{500000};
+   addUsersAt(lots, Location{aUserLocation.go(TenMeters, West)});
+
+   TestTimer t;
+   for (unsigned int i{0}; i < lots; i++) 
+      server->virtualLocationOf(userName(i));
+}
+
 TEST(AGeoServer_Performance, LocationOf) {
    const unsigned int lots{500000};
    addUsersAt(lots, Location{aUserLocation.go(TenMeters, West)});

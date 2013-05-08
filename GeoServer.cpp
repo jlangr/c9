@@ -22,14 +22,19 @@ void GeoServer::updateLocation(const string& user, const Location& location) {
    locations_[user] = location;
 }
 
-// START:impl
 Location GeoServer::locationOf(const string& user) const {
    // optimized
    auto it = find(user);
    if (it == locations_.end()) return Location{};
    return it->second;
 }
-// END:impl
+
+Location GeoServer::virtualLocationOf(const string& user) const {
+   // optimized
+   auto it = find(user);
+   if (it == locations_.end()) return Location{};
+   return it->second;
+}
 
 std::unordered_map<std::string, Location>::const_iterator 
    GeoServer::find(const std::string& user) const {
