@@ -34,25 +34,25 @@ TEST(AWorkObject, DefaultsFunctionToNullObjectWhenConstructedWithId) {
 TEST(AWorkObject, CanBeConstructedWithAnId) {
    Work work(1);
 
-   CHECK_EQUAL(1, work.id());
+   LONGS_EQUAL(1, work.id());
 }
 
 TEST(AWorkObject, DefaultsIdTo0) {
    Work work;
 
-   CHECK_EQUAL(0, work.id());
+   LONGS_EQUAL(0, work.id());
 }
 
 TEST(AWorkObject, DefaultsIdTo0WhenFunctionSpecified) {
    Work work{[]{}};
 
-   CHECK_EQUAL(0, work.id());
+   LONGS_EQUAL(0, work.id());
 }
 
 TEST(AWorkObject, CanBeConstructedWithAFunctionAndId) {
    Work work{[]{}, 1};
 
-   CHECK_EQUAL(1, work.id());
+   LONGS_EQUAL(1, work.id());
 }
 
 TEST(AWorkObject, ExecutesFunctionStored) {
