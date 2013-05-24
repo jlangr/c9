@@ -68,7 +68,7 @@ TEST_GROUP(AThreadPool_AddRequest) {
    vector<shared_ptr<thread>> threads;
 // END_HIGHLIGHT
 
-   void setup() {
+   void setup() override {
       pool.start();
    }
 
