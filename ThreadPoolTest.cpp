@@ -67,7 +67,7 @@ public:
    unsigned int count{0};
    vector<shared_ptr<thread>> threads;
 
-   void teardown() {
+   void teardown() override {
       for (auto& t: threads) t->join();
    }
    
@@ -87,7 +87,7 @@ public:
 };
 
 TEST_GROUP_BASE(AThreadPool_AddRequest, ThreadPoolThreadTests) {
-   void setup() {
+   void setup() override {
       pool.start();
    }
 };
