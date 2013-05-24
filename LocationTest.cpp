@@ -20,8 +20,8 @@ TEST_GROUP(ALocation) {
 TEST(ALocation, AnswersLatitudeAndLongitude) {
    Location location{10, 20};
 
-   CHECK_EQUAL(10, location.latitude());
-   CHECK_EQUAL(20, location.longitude());
+   LONGS_EQUAL(10, location.latitude());
+   LONGS_EQUAL(20, location.longitude());
 }
 
 TEST(ALocation, IsNotUnknownWhenLatitudeAndLongitudeProvided) {
