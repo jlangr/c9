@@ -92,7 +92,7 @@ public:
 
    shared_ptr<ThreadPool> pool;
 
-   virtual void setup() {
+   virtual void setup() override {
       server.useThreadPool(pool);
 
       server.track(aUser);
@@ -123,7 +123,7 @@ TEST_GROUP_BASE(AGeoServer_UsersInBox, GeoServerUsersInBoxTests) {
       virtual void add(Work work) override { work.execute(); }
    };
 
-   void setup() {
+   void setup() override {
       pool = make_shared<SingleThreadedPool>();
       GeoServerUsersInBoxTests::setup();
    }
@@ -191,12 +191,12 @@ TEST_GROUP_BASE(AGeoServer_ScaleTests, GeoServerUsersInBoxTests) {
    GeoServerCountingListener countingListener;
    shared_ptr<thread> t;
 
-   void setup() {
+   void setup() override {
       pool = make_shared<ThreadPool>();
       GeoServerUsersInBoxTests::setup();
    }
 
-   void teardown() {
+   void teardown() override {
       t->join();
    }
 };
