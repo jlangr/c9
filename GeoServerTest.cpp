@@ -88,7 +88,7 @@ TEST_GROUP(AGeoServer_UsersInBox) {
       vector<User> Users;
    } trackingListener;
 
-   void setup() {
+   void setup() override {
       server.track(aUser);
       server.track(bUser);
       server.track(cUser);
