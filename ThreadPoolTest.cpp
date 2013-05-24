@@ -154,7 +154,7 @@ TEST(AThreadPoolWithMultipleThreads, DispatchesWorkToMultipleThreads) {
       pool.add(work);
 
    waitForCountAndFailOnTimeout(NumberOfWorkItems);
-   CHECK_EQUAL(numberOfThreads, numberOfThreadsProcessed());
+   LONGS_EQUAL(numberOfThreads, numberOfThreadsProcessed());
 }
 // END:threads
 
