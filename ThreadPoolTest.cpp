@@ -64,7 +64,7 @@ TEST_GROUP(AThreadPool_AddRequest) {
    condition_variable wasExecuted;
    unsigned int count{0};
 
-   void setup() {
+   void setup() override {
       pool.start();
    }
    
