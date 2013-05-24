@@ -133,6 +133,6 @@ IGNORE_TEST(AGeoServer_UsersInBox, HandlesLargeNumbersOfUsers) {
    TestTimer timer;
    server.usersInBox(aUser, Width, Height, &trackingListener);
 
-   CHECK_EQUAL(lots, trackingListener.Users.size());
+   LONGS_EQUAL(lots, trackingListener.Users.size());
 }
 
