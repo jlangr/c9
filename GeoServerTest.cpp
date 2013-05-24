@@ -81,7 +81,7 @@ TEST_GROUP(AGeoServer_UsersInBox) {
 
    Location aUserLocation { 38, -103 };
 
-   void setup() {
+   void setup() override {
       server.track(aUser);
       server.track(bUser);
       server.track(cUser);
