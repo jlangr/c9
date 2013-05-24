@@ -93,7 +93,6 @@ TEST_GROUP(AGeoServer_UsersInBox) {
       vector<User> Users;
    } trackingListener;
 
-<<<<<<< HEAD
 // START:pool
    class SingleThreadedPool: public ThreadPool {
    public:
