@@ -145,6 +145,6 @@ IGNORE_TEST(AGeoServer_UsersInBox, HandlesLargeNumbersOfUsers) {
    TestTimer timer;
    auto users = server.usersInBox(aUser, Width, Height);
 
-   CHECK_EQUAL(lots, users.size());
+   LONGS_EQUAL(lots, users.size());
 }
 
