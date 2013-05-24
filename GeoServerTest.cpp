@@ -93,6 +93,7 @@ TEST_GROUP(AGeoServer_UsersInBox) {
       vector<User> Users;
    } trackingListener;
 
+<<<<<<< HEAD
 // START:pool
    class SingleThreadedPool: public ThreadPool {
    public:
@@ -100,7 +101,7 @@ TEST_GROUP(AGeoServer_UsersInBox) {
    };
    shared_ptr<ThreadPool> pool;
 
-   void setup() {
+   void setup() override {
       pool = make_shared<SingleThreadedPool>();
       server.useThreadPool(pool);
       // ...
