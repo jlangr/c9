@@ -73,7 +73,7 @@ TEST_GROUP(AThreadPool_AddRequest) {
    }
 
 // START_HIGHLIGHT
-   void teardown() {
+   void teardown() override {
       for (auto& t: threads) t->join();
    }
    // ...
